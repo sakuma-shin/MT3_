@@ -635,6 +635,14 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 		Novice::DrawLine(int(vertices[6].x), int(vertices[6].y), int(vertices[7].x), int(vertices[7].y), color);
 }
 
+void Lerp(const Vector3& v1, const Vector3& v2, float t){
+
+}
+
+void DrawBezier(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPortMatrix, uint32_t color){
+
+}
+
 
 
 
