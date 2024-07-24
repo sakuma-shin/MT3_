@@ -542,7 +542,14 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment) {
 }
 
 
-
+// 法線に垂直なベクトルを求める関数
+Vector3 Perpendicular(const Vector3& normal) {
+	if (normal.x != 0 || normal.y != 0) {
+		return { -normal.y, normal.x, 0 };
+	} else {
+		return { 0, -normal.z, normal.y };
+	}
+}
 
 // 平面の描画関数
 void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
@@ -580,13 +587,22 @@ void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const 
 	
 }
 
-// 法線に垂直なベクトルを求める関数
-Vector3 Perpendicular(const Vector3& normal) {
-	if (normal.x != 0 || normal.y != 0) {
-		return { -normal.y, normal.x, 0 };
-	} else {
-		return { 0, -normal.z, normal.y };
+void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	Vector3 vertices[3];
+
+	for (uint32_t i = 0;i < 3;i++) {
+		vertices[i] = TransForm(TransForm(triangle.vertices[i], viewProjectionMatrix), viewportMatrix);
 	}
+
+	Novice::DrawTriangle(
+		int(vertices[0].x), int(vertices[0].y),
+		int(vertices[1].x), int(vertices[1].y),
+		int(vertices[2].x), int(vertices[2].y),
+		color,kFillModeWireFrame
+	);
 }
+
+
 
 

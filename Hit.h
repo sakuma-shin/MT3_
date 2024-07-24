@@ -22,3 +22,5 @@ int inclusionCircle(Vector2 circle1pos, float circle1radius, Vector2 circle2pos,
 bool IsCollision(const Sphere& sphere, const Plane& plane);
 
 bool IsCollision(const Segment& segment, const Plane& plane);
+
+bool IsCollision(const Segment& segment, const Triangle& triangle);

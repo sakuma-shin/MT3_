@@ -47,14 +47,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate = { 0.26f,0.0f,0.0f };
 	Vector3 cameraTranslate = { 0.0f,1.9f,-6.49f };
 
-	Plane plane;
-	plane.normal = { 0.0f,0.0f,1.0f };
-	plane.distance = 5.0f;
 
 	Segment segment;
 	segment.origin = { 0.0f,0.0f,1.0f };
 	segment.diff = { 1.0f,1.0f,1.0f };
 
+	Triangle triangle;
+	triangle.vertices[0] = { -1.0f,0.0f,0.0f };
+	triangle.vertices[1] = { 0.0f,1.0f,0.0f };
+	triangle.vertices[2] = { 1.0f,0.0f,0.0f };
 
 	uint32_t color = BLACK;
 
@@ -75,10 +76,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("segmentDiff", &segment.diff.x, 0.01f);
 		ImGui::DragFloat("segmentOrigin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
+		ImGui::DragFloat3("Triangle.v0", &triangle.vertices[0].x, 0.01f);
+		ImGui::DragFloat3("Triangle.v1", &triangle.vertices[1].x, 0.01f);
+		ImGui::DragFloat3("Triangle.v2", &triangle.vertices[2].x, 0.01f);
 		ImGui::End();
 
-		plane.normal = Normalize(plane.normal);
 		
 		Matrix4x4 cameraMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, cameraRotate, cameraTranslate);
 		Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -94,7 +96,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Vector3 start = TransForm(TransForm(segment.origin, viewProjectionMatrix), viewportMatrix);
 		Vector3 end = TransForm(TransForm(Add(segment.origin, segment.diff), viewProjectionMatrix), viewportMatrix);
 
-		if (IsCollision(segment, plane)) {
+		if (IsCollision(segment,triangle)) {
 			color = RED;
 		} else {
 			color = BLACK;
@@ -108,9 +110,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		
-		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, color);
-
+		DrawTriangle(triangle, viewProjectionMatrix, viewportMatrix,color);
 		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);
 		
 		

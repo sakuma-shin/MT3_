@@ -80,3 +80,49 @@ bool IsCollision(const Segment& segment, const Plane& plane)
 		return false;
 	}
 }
+
+bool IsCollision(const Segment& segment, const Triangle& triangle)
+{
+	//三角形の法線
+	Vector3 edge1 = Subtract(triangle.vertices[1], triangle.vertices[0]);
+	Vector3 edge2 = Subtract(triangle.vertices[2], triangle.vertices[0]);
+	Vector3 normal = Normalize(Cross(edge1, edge2));
+
+	// 法線ベクトルと距離から平面の方程式を求める
+	float distance = Dot(normal, triangle.vertices[0]);
+
+	Plane trianglePlane = { normal,distance };
+	if (!IsCollision(segment, trianglePlane)) {
+		return false;
+	} else {
+
+		//交差点を計算
+		Vector3 direction = Normalize(segment.diff);
+		float t = (distance - Dot(normal, segment.origin)) / Dot(normal, direction);
+		Vector3 intersection = Add(segment.origin, Multiply(t, direction));
+
+		//各辺の差分ベクトル
+		Vector3 v01 = Subtract(triangle.vertices[1], triangle.vertices[0]);
+		Vector3 v12 = Subtract(triangle.vertices[2], triangle.vertices[1]);
+		Vector3 v20 = Subtract(triangle.vertices[0], triangle.vertices[2]);
+
+		//頂点と衝突点を結んだベクトル
+		Vector3 v0p = Subtract(intersection, triangle.vertices[0]);
+		Vector3 v1p = Subtract(intersection, triangle.vertices[1]);
+		Vector3 v2p = Subtract(intersection, triangle.vertices[2]);
+
+		//各辺を結んだベクトルと、頂点と衝突点pを結んだベクトルのクロス積を取る
+		Vector3 cross01 = Cross(v01, v1p);
+		Vector3 cross12 = Cross(v12, v2p);
+		Vector3 cross20 = Cross(v20, v0p);
+
+		if (Dot(cross01, normal) >= 0.0f &&
+			Dot(cross12, normal) >= 0.0f &&
+			Dot(cross20, normal) >= 0.0f) {
+			return true;
+		} else {
+			false;
+		}
+		return false;
+	}
+}
