@@ -4,6 +4,7 @@
 #include <cmath>
 #include"Vector3.h"
 #include"Matrix4x4.h"
+#include<algorithm>
 
 struct Sphere {
 	Vector3 center;
