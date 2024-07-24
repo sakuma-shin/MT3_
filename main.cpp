@@ -91,6 +91,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//viewportMatrixを作る
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
+		Vector3 start = TransForm(TransForm(segment.origin, viewProjectionMatrix), viewportMatrix);
+		Vector3 end = TransForm(TransForm(Add(segment.origin, segment.diff), viewProjectionMatrix), viewportMatrix);
+
 		if (IsCollision(segment, plane)) {
 			color = RED;
 		} else {
@@ -108,7 +111,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, color);
 
-		Novice::DrawLine(int(segment.origin.x), int(segment.origin.y), int(segment.origin.x + segment.diff.x), int(segment.origin.y + segment.diff.y), color);
+		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);
 		
 		
 
