@@ -584,7 +584,7 @@ void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const 
 	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[2].x), int(points[2].y), color);
 	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[3].x), int(points[3].y), color);;
 	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[3].x), int(points[3].y), color);;
-	
+
 }
 
 void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
@@ -599,8 +599,26 @@ void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatri
 		int(vertices[0].x), int(vertices[0].y),
 		int(vertices[1].x), int(vertices[1].y),
 		int(vertices[2].x), int(vertices[2].y),
-		color,kFillModeWireFrame
+		color, kFillModeWireFrame
 	);
+}
+
+void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color){
+	Vector3 vertices[8];
+	vertices[0] = aabb.min;
+	vertices[1] = { aabb.max.x,aabb.min.y,aabb.min.z };
+	vertices[2] = { aabb.min.x,aabb.min.y,aabb.max.z };
+	vertices[3] = { aabb.max.x,aabb.min.y,aabb.max.z };
+	vertices[4] = { aabb.min.x,aabb.max.y,aabb.min.z };
+	vertices[5] = { aabb.max.x,aabb.max.y,aabb.min.z };
+	vertices[6] = { aabb.min.x,aabb.max.y,aabb.max.z };
+	vertices[7] = aabb.max;
+
+	for (uint32_t i = 0;i < 8;i++) {
+		vertices[i] = TransForm(TransForm(vertices[i], viewProjectionMatrix), viewportMatrix);
+	}
+
+
 }
 
 
