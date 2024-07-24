@@ -51,9 +51,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	plane.normal = { 0.0f,0.0f,1.0f };
 	plane.distance = 5.0f;
 
-	Sphere sphere;
-	sphere.center = { 0.0f,0.0f,0.0f };
-	sphere.radius = 1.0f;
+	Segment segment;
+	segment.origin = { 0.0f,0.0f,1.0f };
+	segment.diff = { 1.0f,1.0f,1.0f };
 
 
 	uint32_t color = BLACK;
@@ -73,8 +73,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
-		ImGui::DragFloat("CameraRadius", &sphere.radius, 0.01f);
+		ImGui::DragFloat3("segmentDiff", &segment.diff.x, 0.01f);
+		ImGui::DragFloat("segmentOrigin", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
 		ImGui::End();
 
@@ -91,7 +91,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//viewportMatrixを作る
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		if (IsCollision(sphere, plane)) {
+		if (IsCollision(segment, plane)) {
 			color = RED;
 		} else {
 			color = BLACK;
@@ -105,8 +105,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
+		
 		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, color);
-		DrawSphere(sphere, viewProjectionMatrix, viewportMatrix, color);
+
+		Novice::DrawLine(int(segment.origin.x), int(segment.origin.y), int(segment.origin.x + segment.diff.x), int(segment.origin.y + segment.diff.y), color);
+		
 		
 
 		///

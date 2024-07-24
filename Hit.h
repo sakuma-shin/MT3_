@@ -3,6 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include"Vector2.h"
+#include"Calculation.h"
 
 
 struct Corners {
@@ -17,3 +18,7 @@ int HitBox(Corners a, Corners b);
 int HitCircle(Vector2 circle1pos, float circle1radius, Vector2 circle2pos, float circle2radius);
 
 int inclusionCircle(Vector2 circle1pos, float circle1radius, Vector2 circle2pos, float circle2radius);
+
+bool IsCollision(const Sphere& sphere, const Plane& plane);
+
+bool IsCollision(const Segment& segment, const Plane& plane);

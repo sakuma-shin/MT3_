@@ -590,12 +590,3 @@ Vector3 Perpendicular(const Vector3& normal) {
 }
 
 
-bool IsCollision(const Sphere& sphere, const Plane& plane) {
-	// 球の中心から平面までの距離を計算
-	float distance = (plane.normal.x * sphere.center.x +
-		plane.normal.y * sphere.center.y +
-		plane.normal.z * sphere.center.z - plane.distance);
-
-	// 球の半径以下なら衝突している
-	return std::abs(distance) <= sphere.radius;
-}

@@ -120,5 +120,3 @@ Vector3 Perpendicular(const Vector3& normal);
 
 
 void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
-
-bool IsCollision(const Sphere& sphere, const Plane& plane);
