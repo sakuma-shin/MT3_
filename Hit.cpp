@@ -147,11 +147,98 @@ bool IsCollision(const AABB& aabb, const Sphere& sphere)
 	closestPoint.z = std::clamp(sphere.center.z, aabb.min.z, aabb.max.z);
 
 	//最近接点と球の中心との距離を求める
-	float distance = Length(Subtract(closestPoint , sphere.center));
+	float distance = Length(Subtract(closestPoint, sphere.center));
 	//距離が半径より小さければ衝突
 	if (distance <= sphere.radius) {
 		return true;
 	} else {
 		return false;
 	}
+}
+
+//bool IsCollision(const AABB& aabb, Segment& segment)
+//{
+//	//線分の終点
+//	Vector3 end = Add(segment.origin, segment.diff);
+//
+//	//線分の方向ベクトル
+//	Vector3 direction = Normalize(Subtract(end, segment.origin));
+//
+//	Vector3 min;
+//	Vector3 max;
+//
+//	min.x = (aabb.min.x - segment.origin.x) / direction.x;
+//	max.x = (aabb.max.x - segment.origin.x) / direction.x;
+//
+//	min.y = (aabb.min.y - segment.origin.y) / direction.y;
+//	max.y = (aabb.max.y - segment.origin.y) / direction.y;
+//
+//	if (min.y > min.x) {
+//
+//	}
+//
+//
+//
+//}
+
+
+bool IsCollision(const AABB& aabb, Segment& segment) {
+	// 線分の始点と終点
+	Vector3 segmentStart = segment.origin;
+	Vector3 segmentEnd = Add(segment.origin, segment.diff);
+
+	// 線分の方向ベクトルを計算
+	Vector3 direction = Normalize(Subtract(segmentEnd, segmentStart));
+
+	// 進入と退出の距離を追跡する変数を初期化
+	float tMin = (aabb.min.x - segmentStart.x) / direction.x;
+	float tMax = (aabb.max.x - segmentStart.x) / direction.x;
+
+	if (tMin > tMax) {
+		std::swap(tMin, tMax);
+	}
+
+	float tYMin = (aabb.min.y - segmentStart.y) / direction.y;
+	float tYMax = (aabb.max.y - segmentStart.y) / direction.y;
+
+	if (tYMin > tYMax) {
+		std::swap(tYMin, tYMax);
+	}
+
+	if (tMin > tYMax || tYMin > tMax) {
+		return false;
+	}
+
+	if (tYMin > tMin) {
+		tMin = tYMin;
+	}
+	if (tYMax < tMax) {
+		tMax = tYMax;
+	}
+
+	float tZMin = (aabb.min.z - segmentStart.z) / direction.z;
+	float tZMax = (aabb.max.z - segmentStart.z) / direction.z;
+
+	if (tZMin > tZMax) {
+		std::swap(tZMin, tZMax);
+	}
+
+	if (tMin > tZMax || tZMin > tMax) {
+		return false;
+	}
+
+	if (tZMin > tMin) {
+		tMin = tZMin;
+	}
+	if (tZMax < tMax) {
+		tMax = tZMax;
+	}
+
+	// 線分がAABBと交差しているかをチェック
+	if (tMin < 1.0f && tMax > 0.0f) {
+		return true;
+	} else {
+		return false;
+	}
+
 }

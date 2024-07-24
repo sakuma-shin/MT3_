@@ -52,9 +52,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	aabb1.min = { -0.5f,-0.5f,-0.5f };
 	aabb1.max = { 0.0f,0.0f,0.0f };
 
-	Sphere sphere;
-	sphere.center = { 0.0f,0.0f,0.0f };
-	sphere.radius = 1.0f;
+	Segment segment;
+	segment.origin = { 0.0f,0.0f,1.0f };
+	segment.diff = { 1.0f,1.0f,1.0f };
 
 	uint32_t color = BLACK;
 
@@ -75,8 +75,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
 		ImGui::DragFloat3("aabb1.max", &aabb1.max.x, 0.01f);
-		ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
-		ImGui::DragFloat("SphereRadius", &sphere.radius, 0.01f);
+		ImGui::DragFloat3("segmentDiff", &segment.diff.x, 0.01f);
+		ImGui::DragFloat3("segmentOrigin", &segment.origin.x, 0.01f);
+
+		/*ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
+		ImGui::DragFloat("SphereRadius", &sphere.radius, 0.01f);*/
 		/*	ImGui::DragFloat3("aabb2.min", &aabb2.min.x, 0.01f);
 			ImGui::DragFloat3("aabb2.max", &aabb2.max.x, 0.01f);*/
 
@@ -94,6 +97,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//viewportMatrixを作る
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
+		Vector3 start = TransForm(TransForm(segment.origin, viewProjectionMatrix), viewportMatrix);
+		Vector3 end = TransForm(TransForm(Add(segment.origin, segment.diff), viewProjectionMatrix), viewportMatrix);
+
 		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
 		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
 
@@ -106,7 +112,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-		if (IsCollision(aabb1,sphere )) {
+		if (IsCollision(aabb1,segment )) {
 			color = RED;
 		} else {
 			color = BLACK;
@@ -121,7 +127,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 		DrawAABB(aabb1, viewProjectionMatrix, viewportMatrix, color);
-		DrawSphere(sphere, viewProjectionMatrix, viewportMatrix, color);
+		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);
 
 		/*DrawTriangle(triangle, viewProjectionMatrix, viewportMatrix,color);
 		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);*/
