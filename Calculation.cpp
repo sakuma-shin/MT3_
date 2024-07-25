@@ -635,13 +635,40 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 		Novice::DrawLine(int(vertices[6].x), int(vertices[6].y), int(vertices[7].x), int(vertices[7].y), color);
 }
 
-void Lerp(const Vector3& v1, const Vector3& v2, float t){
-
+// 線形補完を行う関数
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
+	Vector3 result;
+	result.x = (1 - t) * v1.x + t * v2.x;
+	result.y = (1 - t) * v1.y + t * v2.y;
+	result.z = (1 - t) * v1.z + t * v2.z;
+	return result;
 }
 
-void DrawBezier(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPortMatrix, uint32_t color){
+// ベジエ曲線を描く関数
+void DrawBezier(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2,
+	const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPortMatrix, uint32_t color) {
 
+	const int segments =16; // ベジエ曲線の分割数
+	for (int i = 0; i < segments; ++i) {
+		float t1 = static_cast<float>(i) / segments;
+		float t2 = static_cast<float>(i + 1) / segments;
+
+		// t1とt2に対するベジエ曲線上の点を求める
+		Vector3 p1 = Lerp(Lerp(controlPoint0, controlPoint1, t1), Lerp(controlPoint1, controlPoint2, t1), t1);
+		Vector3 p2 = Lerp(Lerp(controlPoint0, controlPoint1, t2), Lerp(controlPoint1, controlPoint2, t2), t2);
+
+		//座標変換
+		Vector3 transformedP1 = TransForm(p1, viewProjectionMatrix);
+		transformedP1 = TransForm(transformedP1, viewPortMatrix);
+		Vector3 transformedP2 = TransForm(p2, viewProjectionMatrix);
+		transformedP2 = TransForm(transformedP2, viewPortMatrix);
+
+		// 線を描く
+		Novice::DrawLine(static_cast<int>(transformedP1.x), static_cast<int>(transformedP1.y),
+			static_cast<int>(transformedP2.x), static_cast<int>(transformedP2.y), color);
+	}
 }
+
 
 
 
