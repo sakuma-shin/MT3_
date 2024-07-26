@@ -47,14 +47,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate = { 0.26f,0.0f,0.0f };
 	Vector3 cameraTranslate = { 0.0f,1.9f,-6.49f };
 
+	Vector3 translates[3];
+	translates[0] = { 0.2f,1.0f,0.0f };
+	translates[1] = { 0.4f,0.0f,0.0f };
+	translates[2] = { 0.3f,0.0f,0.0f };
 
-	AABB aabb1;
-	aabb1.min = { -0.5f,-0.5f,-0.5f };
-	aabb1.max = { 0.0f,0.0f,0.0f };
+	Vector3 rotates[3];
+	rotates[0] = { 0.0f,0.0f,-6.8f };
+	rotates[1] = { 0.0f,0.0f,-1.4f };
+	rotates[2] = { 0.0f,0.0f,0.0f };
 
-	Segment segment;
-	segment.origin = { 0.0f,0.0f,1.0f };
-	segment.diff = { 1.0f,1.0f,1.0f };
+	Vector3 scales[3];
+	scales[0] = { 1.0f,1.0f,1.0f };
+	scales[1] = { 1.0f,1.0f,1.0f };
+	scales[2] = { 1.0f,1.0f,1.0f };
+
+
 
 	uint32_t color = BLACK;
 
@@ -73,10 +81,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
+		/*ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
 		ImGui::DragFloat3("aabb1.max", &aabb1.max.x, 0.01f);
 		ImGui::DragFloat3("segmentDiff", &segment.diff.x, 0.01f);
-		ImGui::DragFloat3("segmentOrigin", &segment.origin.x, 0.01f);
+		ImGui::DragFloat3("segmentOrigin", &segment.origin.x, 0.01f);*/
 
 		/*ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
 		ImGui::DragFloat("SphereRadius", &sphere.radius, 0.01f);*/
@@ -97,26 +105,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//viewportMatrixを作る
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		Vector3 start = TransForm(TransForm(segment.origin, viewProjectionMatrix), viewportMatrix);
-		Vector3 end = TransForm(TransForm(Add(segment.origin, segment.diff), viewProjectionMatrix), viewportMatrix);
-
-		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
-		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
-
-		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
-		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
-
-		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
-		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
 
 
 
-
-		if (IsCollision(aabb1,segment )) {
-			color = RED;
-		} else {
-			color = BLACK;
-		}
 
 		///
 		/// ↑更新処理ここまで
@@ -126,8 +117,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawAABB(aabb1, viewProjectionMatrix, viewportMatrix, color);
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);
+
 
 		/*DrawTriangle(triangle, viewProjectionMatrix, viewportMatrix,color);
 		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);*/
