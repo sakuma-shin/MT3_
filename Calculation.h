@@ -151,4 +151,4 @@ Matrix4x4 operator-(const Matrix4x4& m1,const Matrix4x4& m2) { return Subtract(m
 Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2) { return Multiply(m1, m2);}
 
 Vector3 operator-(const Vector3& v) { return{ -v.x,-v.y,-v.z }; }
-Vector3 operator-(const Vector3& v) {return v;}
+Vector3 operator+(const Vector3& v) {return v;}
