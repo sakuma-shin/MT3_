@@ -62,6 +62,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scales[1] = { 1.0f,1.0f,1.0f };
 	scales[2] = { 1.0f,1.0f,1.0f };
 
+	Sphere sphere1;
+	sphere1.center =translates[0];
+	sphere1.radius = 0.075f;
+
+	Sphere sphere2;
+	sphere2.center = translates[1];
+	sphere2.radius = 0.075f;
+
+	Sphere sphere3;
+	sphere3.center = translates[2];
+	sphere3.radius = 0.075f;
+
+	Segment shoulderToElbow;
+	shoulderToElbow.origin = {};
+	shoulderToElbow.diff = {};
+
+	Segment elbowToHand;
+	elbowToHand.origin = {};
+	elbowToHand.diff = {};
+
+
+
 
 
 	/*uint32_t color = BLACK;*/
@@ -81,10 +103,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		/*ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
-		ImGui::DragFloat3("aabb1.max", &aabb1.max.x, 0.01f);
-		ImGui::DragFloat3("segmentDiff", &segment.diff.x, 0.01f);
-		ImGui::DragFloat3("segmentOrigin", &segment.origin.x, 0.01f);*/
+		ImGui::DragFloat3("translates[0]", &translates[0].x, 0.01f);
+		ImGui::DragFloat3("translates[1]", &translates[1].x, 0.01f);
+		ImGui::DragFloat3("translates[2]", &translates[2].x, 0.01f);
+		/*ImGui::DragFloat3("segmentOrigin", &segment.origin.x, 0.01f);*/
 
 		/*ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
 		ImGui::DragFloat("SphereRadius", &sphere.radius, 0.01f);*/
@@ -105,9 +127,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//viewportMatrixを作る
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
+		Vector3 shoulderPos = TransForm(TransForm(translates[0], viewProjectionMatrix), viewportMatrix);
+		shoulderToElbow.origin = shoulderPos;
 
+		Vector3 elbowPos= TransForm(TransForm(translates[1], viewProjectionMatrix), viewportMatrix);
+		shoulderToElbow.diff = Subtract(elbowPos, shoulderPos);
+		elbowToHand.origin = elbowPos;
+		
+		Vector3 handPos= TransForm(TransForm(translates[2], viewProjectionMatrix), viewportMatrix);
+		elbowToHand.diff = Subtract(handPos, elbowPos);
 
+		Vector3 shoulderToElbowEnd = Add(shoulderToElbow.origin, shoulderToElbow.diff);
 
+		Vector3 elbowToHandEnd = Add(elbowToHand.origin, elbowToHand.diff);
+
+		sphere1.center = translates[0];
+
+		sphere2.center = translates[1];
+
+		sphere3.center = translates[2];
 
 		///
 		/// ↑更新処理ここまで
@@ -119,8 +157,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 
 
-		/*DrawTriangle(triangle, viewProjectionMatrix, viewportMatrix,color);
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color);*/
+		/*DrawTriangle(triangle, viewProjectionMatrix, viewportMatrix,color);*/
+
+		Novice::DrawLine(int(shoulderToElbow.origin.x), int(shoulderToElbow.origin.y), int(shoulderToElbowEnd.x), int(shoulderToElbowEnd.y), WHITE);
+
+		Novice::DrawLine(int(elbowToHand.origin.x), int(elbowToHand.origin.y), int(elbowToHandEnd.x), int(elbowToHandEnd.y), WHITE);
+
+		DrawSphere(sphere1, viewProjectionMatrix, viewportMatrix, RED);
+		DrawSphere(sphere2, viewProjectionMatrix, viewportMatrix, GREEN);
+		DrawSphere(sphere3, viewProjectionMatrix, viewportMatrix, BLUE);
 
 
 
